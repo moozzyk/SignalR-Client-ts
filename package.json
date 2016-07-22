@@ -1,0 +1,21 @@
+{
+  "name": "signalr-client-ts",
+  "version": "1.0.0",
+  "description": "ASP.NET SignalR TypeScript/JavaScript Client",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "jasmine-core": "2.4.1"
+  },
+  "scripts": {
+    "tsc": "tsc",
+    "tsc:w": "tsc -w",
+    "start": "concurrently \"npm run tsc:w\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

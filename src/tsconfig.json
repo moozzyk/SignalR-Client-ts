@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "sourceMap": true,
+        "removeComments": true,
+        "outFile": "../artifacts/lib/signalR.js"
+    },
+    "files": [
+        "connection.ts"
+    ]
+}

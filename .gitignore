@@ -1,2 +1,5 @@
 .vs/
 .vscode/
+artifacts/
+node_modules/
+*.log
