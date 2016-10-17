@@ -1,14 +1,15 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "sourceMap": true,
-        "removeComments": true,
-        "outFile": "../artifacts/lib/SignalR.js",
-        "declaration": true
-    },
-    "files": [
-        "IHttpClient.ts",
-        "HttpClient.ts",
-        "Connection.ts"
-    ]
+  "compilerOptions": {
+    "target": "es6",
+    "sourceMap": true,
+    "removeComments": true,
+    "outFile": "../artifacts/lib/SignalR.js",
+    "declaration": true,
+    "noImplicitAny": true
+  },
+  "files": [
+    "IHttpClient.ts",
+    "HttpClient.ts",
+    "Connection.ts"
+  ]
 }

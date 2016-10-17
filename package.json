@@ -8,7 +8,12 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "jasmine-core": "2.4.1"
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.0.2",
+    "jasmine-core": "^2.5.2",
+    "merge-stream": "^1.0.0",
+    "typescript": "^2.0.3"
   },
   "scripts": {
     "tsc": "tsc",
@@ -16,6 +21,9 @@
     "start": "concurrently \"npm run tsc:w\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "moozzyk",
+  "license": "MIT",
+  "repository": {
+    "type": "git"
+  }
 }
