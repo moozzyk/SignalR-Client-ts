@@ -2,7 +2,8 @@
 namespace SignalR {
 
     export enum ConnectionState {
-        Disconnected
+        Disconnected,
+        Connecting
     }
 
     export class Connection {
@@ -23,7 +24,14 @@ namespace SignalR {
                 throw new Error("Cannot start a connection that is not in the disconnected state.");
             }
 
+            this.changeState(ConnectionState.Connecting);
+
             throw new Error("Not implemented");
+        }
+
+        private changeState(newState: ConnectionState):void {
+            console.log(`${this.connectionState} -> ${newState}`);
+            this.connectionState = newState;
         }
     }
 }
