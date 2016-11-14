@@ -8,8 +8,13 @@
     "noImplicitAny": true
   },
   "files": [
+    "Common.ts",
     "IHttpClient.ts",
     "HttpClient.ts",
-    "Connection.ts"
+    "Connection.ts",
+    "UrlBuilder.ts",
+    "INegotiateResponse.ts",
+    "ITransport.ts",
+    "WebSocketsTransport.ts"
   ]
 }

@@ -19,17 +19,16 @@ namespace SignalR {
                         resolve(xhr.response);
                     }
                     else {
-                        // TODO: status
-                        reject(/*xhr.status,*/ xhr.statusText);
+                        reject({ status: xhr.status, statusText: xhr.statusText});
                     }
                 };
 
                 xhr.onerror = () => {
-                    reject(xhr.statusText);
+                    reject({status: xhr.status, statusText: xhr.statusText});
                 };
-    });
+            });
 
-        return promise;
+            return promise;
         }
     }
 }
