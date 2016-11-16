@@ -1,34 +1,34 @@
-namespace SignalR {
-    export class HttpClient implements IHttpClient {
-        public get(url:string): Promise<string> {
-            return this.xhr("GET", url);
-        }
+import { IHttpClient } from "./IHttpClient"
 
-        public post(url:string, data: string): Promise<string>{
-            return this.xhr("POST", url);
-        }
+export class HttpClient implements IHttpClient {
+    public get(url:string): Promise<string> {
+        return this.xhr("GET", url);
+    }
 
-        private xhr(method: string, url: string, data?: string): Promise<void> {
-            let promise = new Promise<void>((resolve, reject) => {
-                let xhr = new XMLHttpRequest();
-                xhr.open(method, url, true);
-                xhr.send(data);
+    public post(url:string, data: string): Promise<string>{
+        return this.xhr("POST", url);
+    }
 
-                xhr.onload = () => {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        resolve(xhr.response);
-                    }
-                    else {
-                        reject({ status: xhr.status, statusText: xhr.statusText});
-                    }
-                };
+    private xhr(method: string, url: string, data?: string): Promise<void> {
+        let promise = new Promise<void>((resolve, reject) => {
+            let xhr = new XMLHttpRequest();
+            xhr.open(method, url, true);
+            xhr.send(data);
 
-                xhr.onerror = () => {
-                    reject({status: xhr.status, statusText: xhr.statusText});
-                };
-            });
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    resolve(xhr.response);
+                }
+                else {
+                    reject({ status: xhr.status, statusText: xhr.statusText});
+                }
+            };
 
-            return promise;
-        }
+            xhr.onerror = () => {
+                reject({status: xhr.status, statusText: xhr.statusText});
+            };
+        });
+
+        return promise;
     }
 }
