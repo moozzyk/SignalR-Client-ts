@@ -8,20 +8,12 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "del": "^2.2.2",
-    "gulp": "^3.9.1",
-    "gulp-concat": "^2.6.0",
-    "gulp-jasmine": "^2.4.2",
-    "gulp-typescript": "^3.0.2",
-    "jasmine-core": "^2.5.2",
-    "merge-stream": "^1.0.0",
+    "jasmine-node": "^1.14.5",
     "typescript": "^2.0.3"
   },
   "scripts": {
-    "tsc": "tsc",
-    "tsc:w": "tsc -w",
-    "start": "concurrently \"npm run tsc:w\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "tsc -p test",
+    "test": "jasmine-node artifacts/tests/test/"
   },
   "author": "moozzyk",
   "license": "MIT",
