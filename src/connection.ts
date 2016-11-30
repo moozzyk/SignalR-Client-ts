@@ -52,7 +52,7 @@ export class Connection {
                 this.keepAliveTimeout = negotiateResponse.KeepAliveTimeout;
                 this.disconnectTimeout = negotiateResponse.DisconnectTimeout;
 
-                return this.tryStartTransport(negotiateResponse.ConnectionTimeout);
+                return this.tryStartTransport(negotiateResponse.TransportConnectTimeout);
             })
             .then(transport => {
                 this.transport = transport;
@@ -68,7 +68,7 @@ export class Connection {
     private negotiate(): Promise<INegotiateResponse> {
         return this.httpClient.get(urlBuilder.buildNegotiate(this.url, this.queryString))
         .then(response => {
-            let negotiateResponse = JSON.parse(response) as INegotiateResponse;
+            let negotiateResponse:INegotiateResponse = JSON.parse(response) as INegotiateResponse;
             if (negotiateResponse.ProtocolVersion != PROTOCOL_VERSION) {
                 throw new Error(`Unsupported protocol version: ${negotiateResponse.ProtocolVersion}`);
             }
@@ -76,15 +76,15 @@ export class Connection {
         });
     }
 
-    private tryStartTransport(connectionTimeout: number): Promise<ITransport> {
+    private tryStartTransport(transportConnectTimeout: number): Promise<ITransport> {
         let initCallback: () => void;
 
-        var initPromise = new Promise((reject, resolve) => {
+        let initPromise = new Promise((reject, resolve) => {
             initCallback = resolve;
             setTimeout(() => {
                     console.log("Timeout starting connection");
-                    reject();
-                }, connectionTimeout * 1000);
+                    reject(new Error("Timeout starting connection"));
+                }, transportConnectTimeout * 1000);
         });
 
         let transport = new WebSocketsTransport();

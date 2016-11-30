@@ -9,8 +9,8 @@ export class HttpClient implements IHttpClient {
         return this.xhr("POST", url);
     }
 
-    private xhr(method: string, url: string, data?: string): Promise<void> {
-        let promise = new Promise<void>((resolve, reject) => {
+    private xhr(method: string, url: string, data?: string): Promise<string> {
+        let promise = new Promise<string>((resolve, reject) => {
             let xhr = new XMLHttpRequest();
             xhr.open(method, url, true);
             xhr.send(data);
@@ -20,7 +20,7 @@ export class HttpClient implements IHttpClient {
                     resolve(xhr.response);
                 }
                 else {
-                    reject({ status: xhr.status, statusText: xhr.statusText});
+                    reject({status: xhr.status, statusText: xhr.statusText});
                 }
             };
 
