@@ -23,6 +23,7 @@ export class Connection {
     private disconnectTimeout: number;
     private transport: ITransport;
     private connectionState: ConnectionState;
+    private options: ISignalROptions;
 
     constructor(url: string, queryString?: string, logging?:boolean,  options?:ISignalROptions) {
         this.url = url;
@@ -34,7 +35,7 @@ export class Connection {
         // jasmine-node chokes on default parameter values
         options = options || {};
         this.httpClient = options.httpClient || new HttpClient();
-
+        this.options = options;
         this.connectionState = ConnectionState.Disconnected;
     }
 
@@ -56,14 +57,15 @@ export class Connection {
                 this.keepAliveTimeout = negotiateResponse.KeepAliveTimeout;
                 this.disconnectTimeout = negotiateResponse.DisconnectTimeout;
 
-                return this.tryStartTransport(negotiateResponse.TransportConnectTimeout);
+                let transport = this.options.transport || new WebSocketsTransport();
+                return this.tryStartTransport(negotiateResponse.TransportConnectTimeout, transport);
             })
             .then(transport => {
                 this.transport = transport;
                 this.changeState(ConnectionState.Connected);
             })
             .catch(e => {
-                this.log(`No transports could be started: ${e}`);
+                this.log(`No transports could be started. ${e ? e : ""}`);
                 this.changeState(ConnectionState.Disconnected)
                 throw e;
             });
@@ -74,44 +76,52 @@ export class Connection {
         .then(response => {
             let negotiateResponse:INegotiateResponse = JSON.parse(response) as INegotiateResponse;
             if (negotiateResponse.ProtocolVersion != PROTOCOL_VERSION) {
-                throw new Error(`Unsupported protocol version: ${negotiateResponse.ProtocolVersion}`);
+                throw new Error(`Unsupported protocol version: '${negotiateResponse.ProtocolVersion}'.`);
             }
             return negotiateResponse;
         });
     }
 
-    private tryStartTransport(transportConnectTimeout: number): Promise<ITransport> {
+    private tryStartTransport(transportConnectTimeout: number, transport: ITransport): Promise<ITransport> {
         let initCallback: () => void;
 
-        let initPromise = new Promise((reject, resolve) => {
-            initCallback = resolve;
-            setTimeout(() => {
-                    console.log("Timeout starting connection");
-                    reject(new Error("Timeout starting connection"));
+        let connectTimeoutHandle: any;
+        let initPromise = new Promise((resolve, reject) => {
+            connectTimeoutHandle = setTimeout(() => {
+                    this.log("Timeout starting connection.");
+                    reject(new Error("Timeout starting connection."));
                 }, transportConnectTimeout * 1000);
+
+            initCallback = () => {
+                clearTimeout(connectTimeoutHandle);
+                resolve();
+            }
         });
 
-        let transport = new WebSocketsTransport();
         transport.onMessageReceived = (message: string) => {
             this.onMessageReceived(message, initCallback);
         };
 
         return transport.start(urlBuilder.buildConnect(this.url, transport.getName(), this.connectionToken, this.queryString))
             .then(() => {
-                let startPromise = new HttpClient().get(
+                let startPromise = this.options.httpClient.get(
                     urlBuilder.buildStart(this.url, transport.getName(), this.connectionToken, this.queryString));
 
                 return startPromise
                     .then(() => initPromise)
-                    .then(() => transport);
+                    .then(() => transport)
             })
+            .catch((e:any) => {
+                clearTimeout(connectTimeoutHandle);
+                throw e;
+            });
     }
 
     private onMessageReceived(message: string, initCallback: () => void) {
         if (!message) {
             return;
         }
-
+        this.log(`Message received: '${message}'.`);
         let m = JSON.parse(message);
 
         if (m.S === 1) {

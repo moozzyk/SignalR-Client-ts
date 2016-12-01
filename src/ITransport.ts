@@ -5,4 +5,5 @@ export interface ITransport {
     start(url: string): Promise<void>;
     onMessageReceived: MessageReceived;
     // TODO: onError
+    // TODO: stop
 }

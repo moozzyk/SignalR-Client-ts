@@ -1,6 +1,7 @@
 /// <reference path="../typings/index.d.ts" />
 import * as signalR from "../src/Connection"
 import { IHttpClient } from "../src/IHttpClient"
+import { ITransport } from "../src/ITransport"
 import { ISignalROptions } from "../src/ISignalROptions"
 
 describe("Connection", () => {
@@ -49,38 +50,186 @@ describe("Connection", () => {
                 done();
             })
             .catch((e: Error) => {
-                console.log(e);
-                expect(e.message).toBe("Unsupported protocol version: 1.2");
+                expect(e.message).toBe("Unsupported protocol version: '1.2'.");
                 done();
             });
     });
 
-    xit("fails to start if init not received within ConnectionTimeOut", done => {
+    it("fails to start if transport fails to start", done => {
+        let transport: ITransport = <ITransport>{
+            getName(): string {
+                return "fakeTransport";
+            },
+            start(url: string): Promise<void>{
+                return Promise.reject(new Error("Start failed."));
+            },
+            onMessageReceived: (m: string) => {}
+        };
+
         let options: ISignalROptions = {
             httpClient: <IHttpClient>{
-                get(url: string) : Promise<string> {
-                    return Promise.resolve(JSON.stringify({
-                        ProtocolVersion: "1.5",
-                        TransportConnectTimeout: 0.5,
-                        ConnectionToken: "connectionToken",
-                        ConnectionId: "connectionId",
-                        KeepAliveTimeout: 20.0,
-                        DisconnectTimeout: 30.0
-                      }));
-                }
-            }
+                get(url: string): Promise<string> {
+                    if (url.indexOf("negotiate") >= 0) {
+                        return Promise.resolve(JSON.stringify({
+                            ProtocolVersion: "1.5",
+                            TransportConnectTimeout: 10,
+                            ConnectionToken: "connectionToken",
+                            ConnectionId: "connectionId",
+                            KeepAliveTimeout: 20.0,
+                            DisconnectTimeout: 30.0
+                        }));
+                    }
+                    else {
+                      return Promise.resolve();
+                  }
+               }
+            },
+            transport: transport
         } as ISignalROptions;
 
         let connection = new signalR.Connection("https://fakeuri", undefined, undefined, options);
         connection.start()
-          .then(() => {
-              expect(false).toBe(true);
-              done();
-          })
-          .catch((e:Error) => {
-              expect(e.message).toBe("Timeout starting connection");
-              done();
-          })
-          done();
+        .then(() => {
+            expect(false).toBe(true);
+            done();
+        })
+        .catch((e:Error) => {
+            expect(e.message).toBe("Start failed.");
+            done();
+        })
     });
+
+    it("fails to start if start request fails", done => {
+        let transport: ITransport = <ITransport>{
+            getName(): string {
+                return "fakeTransport";
+            },
+            start(url: string): Promise<void>{
+                return Promise.resolve();
+            },
+            onMessageReceived: (m: string) => {}
+        };
+
+        let options: ISignalROptions = {
+            httpClient: <IHttpClient>{
+                get(url: string): Promise<string> {
+                    if (url.indexOf("negotiate") >= 0) {
+                        return Promise.resolve(JSON.stringify({
+                            ProtocolVersion: "1.5",
+                            TransportConnectTimeout: 10,
+                            ConnectionToken: "connectionToken",
+                            ConnectionId: "connectionId",
+                            KeepAliveTimeout: 20.0,
+                            DisconnectTimeout: 30.0
+                        }));
+                    }
+                    else {
+                      return Promise.reject(new Error("Start request failed."));
+                  }
+               }
+            },
+            transport: transport
+        } as ISignalROptions;
+
+        let connection = new signalR.Connection("https://fakeuri", undefined, undefined, options);
+        connection.start()
+        .then(() => {
+            expect(false).toBe(true);
+            done();
+        })
+        .catch((e:Error) => {
+            expect(e.message).toBe("Start request failed.");
+            done();
+        })
+    });
+
+    it("fails to start if init not received within ConnectionTimeOut", done => {
+        let transport: ITransport = <ITransport>{
+            getName(): string {
+                return "fakeTransport";
+            },
+            start(url: string): Promise<void>{
+                return Promise.resolve();
+            },
+            onMessageReceived: (m: string) => {}
+        };
+
+        let options: ISignalROptions = {
+            httpClient: <IHttpClient>{
+                get(url: string): Promise<string> {
+                    if (url.indexOf("negotiate") >= 0) {
+                        return Promise.resolve(JSON.stringify({
+                            ProtocolVersion: "1.5",
+                            TransportConnectTimeout: 0.1,
+                            ConnectionToken: "connectionToken",
+                            ConnectionId: "connectionId",
+                            KeepAliveTimeout: 20.0,
+                            DisconnectTimeout: 30.0
+                        }));
+                    }
+                    else {
+                      return Promise.resolve();
+                  }
+               }
+            },
+            transport: transport
+        } as ISignalROptions;
+
+        let connection = new signalR.Connection("https://fakeuri", undefined, undefined, options);
+        connection.start()
+        .then(() => {
+            expect(false).toBe(true);
+            done();
+        })
+        .catch((e:Error) => {
+            expect(e.message).toBe("Timeout starting connection.");
+            done();
+        })
+    });
+
+    it("can be started", done => {
+        let transport: ITransport = <ITransport>{
+            getName(): string {
+                return "fakeTransport";
+            },
+            start(url: string): Promise<void>{
+                return Promise.resolve();
+            },
+            onMessageReceived: (m: string) => {}
+        };
+
+        let options: ISignalROptions = {
+            httpClient: <IHttpClient>{
+                get(url: string): Promise<string> {
+                    if (url.indexOf("negotiate") >= 0) {
+                        return Promise.resolve(JSON.stringify({
+                            ProtocolVersion: "1.5",
+                            TransportConnectTimeout: 10,
+                            ConnectionToken: "connectionToken",
+                            ConnectionId: "connectionId",
+                            KeepAliveTimeout: 20.0,
+                            DisconnectTimeout: 30.0
+                        }));
+                    }
+                    else {
+                      transport.onMessageReceived("{\"C\":\"s-0\",\"S\":1,\"M\":[]}");
+                      return Promise.resolve();
+                  }
+               }
+            },
+            transport: transport
+        } as ISignalROptions;
+
+        let connection = new signalR.Connection("https://fakeuri", undefined, undefined, options);
+        connection.start()
+        .then(() => {
+            expect(true).toBe(true);
+            done();
+        })
+        .catch((e:Error) => {
+            expect(false).toBe(true);
+            done();
+        })
+    });
+
 });
