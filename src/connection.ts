@@ -3,6 +3,7 @@ import { HttpClient } from "./HttpClient"
 import { ITransport } from "./ITransport"
 import { WebSocketsTransport } from "./Transports"
 import { PROTOCOL_VERSION } from "./Constants"
+import { ISignalROptions } from "./ISignalROptions"
 import * as urlBuilder from "./UrlBuilder"
 
 export enum ConnectionState {
@@ -23,13 +24,16 @@ export class Connection {
     private transport: ITransport;
     private connectionState: ConnectionState;
 
-    constructor(url: string, queryString?: string, logging?:boolean,  httpClient?: IHttpClient) {
+    constructor(url: string, queryString?: string, logging?:boolean,  options?:ISignalROptions) {
         this.url = url;
-        this.queryString = (queryString && queryString[0] === '?')
+        this.queryString = (queryString && queryString[0] == '?')
             ? queryString.slice(1)
             : queryString;
         this.logging = logging || true;
-        this.httpClient = httpClient || new HttpClient();
+
+        // jasmine-node chokes on default parameter values
+        options = options || {};
+        this.httpClient = options.httpClient || new HttpClient();
 
         this.connectionState = ConnectionState.Disconnected;
     }

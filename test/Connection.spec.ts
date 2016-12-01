@@ -1,18 +1,24 @@
 /// <reference path="../typings/index.d.ts" />
 import * as signalR from "../src/Connection"
-import {IHttpClient} from "../src/IHttpClient"
+import { IHttpClient } from "../src/IHttpClient"
+import { ISignalROptions } from "../src/ISignalROptions"
 
 describe("Connection", () => {
     it("is created in disconnected state", () => {
         let connection = new signalR.Connection("https://test");
-        expect(connection.state === signalR.ConnectionState.Disconnected).toEqual(true)
+        expect(connection.state).toEqual(signalR.ConnectionState.Disconnected);
     });
 
     it("fails to connect if negotiate fails", done => {
-        let fakeHttpClient = <IHttpClient>{
-          get(url: string) : Promise<string> { return Promise.reject({status:"400", statusText: "Bad request"}) }
+        let options: ISignalROptions = {
+            httpClient: <IHttpClient>{
+                get(url: string) : Promise<string> {
+                    return Promise.reject({status:"400", statusText: "Bad request"});
+                }
+            }
         };
-        let connection = new signalR.Connection("https://fakeuri", undefined, undefined, fakeHttpClient);
+
+        let connection = new signalR.Connection("https://fakeuri", undefined, undefined, options);
 
         connection.start()
             .then(() => {
@@ -27,10 +33,15 @@ describe("Connection", () => {
     });
 
     it("fails to connect if protocol version not 1.5", done => {
-        let fakeHttpClient = <IHttpClient>{
-            get(url: string) : Promise<string> { return Promise.resolve("{ \"ProtocolVersion\": \"1.2\"}"); }
-        };
-        let connection = new signalR.Connection("https://fakeuri", undefined, undefined, fakeHttpClient);
+        let options: ISignalROptions = {
+            httpClient: <IHttpClient>{
+                get(url: string) : Promise<string> {
+                  return Promise.resolve("{ \"ProtocolVersion\": \"1.2\"}");
+                }
+            }
+        } as ISignalROptions;
+
+        let connection = new signalR.Connection("https://fakeuri", undefined, undefined, options);
 
         connection.start()
             .then(() => {
@@ -45,19 +56,22 @@ describe("Connection", () => {
     });
 
     xit("fails to start if init not received within ConnectionTimeOut", done => {
-        let fakeHttpClient = <IHttpClient>{
-            get(url: string) : Promise<string> {
-                return Promise.resolve(JSON.stringify({
-                    ProtocolVersion: "1.5",
-                    TransportConnectTimeout: 0.5,
-                    ConnectionToken: "connectionToken",
-                    ConnectionId: "connectionId",
-                    KeepAliveTimeout: 20.0,
-                    DisconnectTimeout: 30.0
-                  }));
+        let options: ISignalROptions = {
+            httpClient: <IHttpClient>{
+                get(url: string) : Promise<string> {
+                    return Promise.resolve(JSON.stringify({
+                        ProtocolVersion: "1.5",
+                        TransportConnectTimeout: 0.5,
+                        ConnectionToken: "connectionToken",
+                        ConnectionId: "connectionId",
+                        KeepAliveTimeout: 20.0,
+                        DisconnectTimeout: 30.0
+                      }));
+                }
             }
-        };
-        let connection = new signalR.Connection("https://fakeuri", undefined, undefined, fakeHttpClient);
+        } as ISignalROptions;
+
+        let connection = new signalR.Connection("https://fakeuri", undefined, undefined, options);
         connection.start()
           .then(() => {
               expect(false).toBe(true);
