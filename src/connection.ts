@@ -136,6 +136,8 @@ export class Connection {
         if (this.connectionState != ConnectionState.Connected) {
             throw new Error("Cannot send data when the connection is not in the Connected state.");
         }
+        this.transport.send(data);
+        // TODO: handle exceptions
     }
 
     private onMessageReceived(message: string, initCallback: () => void) {

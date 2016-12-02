@@ -9,6 +9,10 @@ export class WebSocketsTransport implements ITransport {
         throw new Error("Not implemented.");
     }
 
+    public send(data: string) {
+        throw new Error("Not implemented.");
+    }
+
     public onMessageReceived: MessageReceived;
     public onError: ErrorReceived;
 }
