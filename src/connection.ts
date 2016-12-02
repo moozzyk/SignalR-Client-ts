@@ -65,7 +65,7 @@ export class Connection {
                 this.changeState(ConnectionState.Connected);
             })
             .catch(e => {
-                this.log(`No transports could be started. ${e ? e : ""}`);
+                this.log(`No transports could be started. ${e || ""}`);
                 this.changeState(ConnectionState.Disconnected)
                 throw e;
             });
@@ -84,6 +84,7 @@ export class Connection {
 
     private tryStartTransport(transportConnectTimeout: number, transport: ITransport): Promise<ITransport> {
         let initCallback: () => void;
+        let initTransportErrorCallback: (e:Error) => void;
 
         let connectTimeoutHandle: any;
         let initPromise = new Promise((resolve, reject) => {
@@ -96,11 +97,25 @@ export class Connection {
                 clearTimeout(connectTimeoutHandle);
                 resolve();
             }
+
+            initTransportErrorCallback = (e:Error) => {
+                this.log(`Transport failed when starting connection. ${e || ""}`);
+                clearTimeout(connectTimeoutHandle);
+                reject(new Error(`Transport failed when starting connection. ${e || ""}`));
+            }
         });
 
         transport.onMessageReceived = (message: string) => {
             this.onMessageReceived(message, initCallback);
         };
+
+        transport.onError = (e:Error) => {
+            if (this.connectionState == ConnectionState.Connecting) {
+                initTransportErrorCallback(e);
+                return;
+            }
+            // TODO: else?
+        }
 
         return transport.start(urlBuilder.buildConnect(this.url, transport.getName(), this.connectionToken, this.queryString))
             .then(() => {

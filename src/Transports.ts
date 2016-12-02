@@ -1,4 +1,4 @@
-import { ITransport, MessageReceived } from "./ITransport"
+import { ITransport, MessageReceived, ErrorReceived } from "./ITransport"
 
 export class WebSocketsTransport implements ITransport {
     public getName() {
@@ -10,4 +10,5 @@ export class WebSocketsTransport implements ITransport {
     }
 
     public onMessageReceived: MessageReceived;
+    public onError: ErrorReceived;
 }

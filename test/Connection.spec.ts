@@ -29,6 +29,7 @@ describe("Connection", () => {
             .catch(e => {
                 expect(e.status).toBe("400");
                 expect(e.statusText).toBe("Bad request");
+                expect(connection.state).toBe(signalR.ConnectionState.Disconnected);
                 done();
             });
     });
@@ -51,6 +52,7 @@ describe("Connection", () => {
             })
             .catch((e: Error) => {
                 expect(e.message).toBe("Unsupported protocol version: '1.2'.");
+                expect(connection.state).toBe(signalR.ConnectionState.Disconnected);
                 done();
             });
     });
@@ -95,6 +97,7 @@ describe("Connection", () => {
         })
         .catch((e:Error) => {
             expect(e.message).toBe("Start failed.");
+            expect(connection.state).toBe(signalR.ConnectionState.Disconnected);
             done();
         })
     });
@@ -139,6 +142,7 @@ describe("Connection", () => {
         })
         .catch((e:Error) => {
             expect(e.message).toBe("Start request failed.");
+            expect(connection.state).toBe(signalR.ConnectionState.Disconnected);
             done();
         })
     });
@@ -183,6 +187,54 @@ describe("Connection", () => {
         })
         .catch((e:Error) => {
             expect(e.message).toBe("Timeout starting connection.");
+            expect(connection.state).toBe(signalR.ConnectionState.Disconnected);
+            done();
+        })
+    });
+
+    it("fails to start if transport fails after starting", done => {
+        let transport: ITransport = <ITransport>{
+            getName(): string {
+                return "fakeTransport";
+            },
+            start(url: string): Promise<void>{
+                return Promise.resolve();
+            },
+            onMessageReceived: (m: string) => {},
+            onError: (e: Error) => {}
+        };
+
+        let options: ISignalROptions = {
+            httpClient: <IHttpClient>{
+                get(url: string): Promise<string> {
+                    if (url.indexOf("negotiate") >= 0) {
+                        return Promise.resolve(JSON.stringify({
+                            ProtocolVersion: "1.5",
+                            TransportConnectTimeout: 10,
+                            ConnectionToken: "connectionToken",
+                            ConnectionId: "connectionId",
+                            KeepAliveTimeout: 20.0,
+                            DisconnectTimeout: 30.0
+                        }));
+                    }
+                    else {
+                      transport.onError(new Error("Transport disconnected."));
+                      return Promise.resolve();
+                  }
+               }
+            },
+            transport: transport
+        } as ISignalROptions;
+
+        let connection = new signalR.Connection("https://fakeuri", undefined, undefined, options);
+        connection.start()
+        .then(() => {
+            expect(false).toBe(true);
+            done();
+        })
+        .catch((e:Error) => {
+            expect(e.message).toBe("Transport failed when starting connection. Error: Transport disconnected.");
+            expect(connection.state).toBe(signalR.ConnectionState.Disconnected);
             done();
         })
     });
@@ -224,6 +276,7 @@ describe("Connection", () => {
         connection.start()
         .then(() => {
             expect(true).toBe(true);
+            expect(connection.state).toBe(signalR.ConnectionState.Connected);
             done();
         })
         .catch((e:Error) => {
