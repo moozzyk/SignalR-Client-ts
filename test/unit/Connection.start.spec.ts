@@ -1,8 +1,8 @@
-/// <reference path="../typings/index.d.ts" />
-import * as signalR from "../src/Connection"
-import { IHttpClient } from "../src/IHttpClient"
-import { ITransport } from "../src/ITransport"
-import { ISignalROptions } from "../src/ISignalROptions"
+/// <reference path="../../typings/index.d.ts" />
+import * as signalR from "../../src/Connection"
+import { IHttpClient } from "../../src/IHttpClient"
+import { ITransport } from "../../src/ITransport"
+import { ISignalROptions } from "../../src/ISignalROptions"
 
 describe("Connection", () => {
     it("fails to connect if negotiate fails", done => {

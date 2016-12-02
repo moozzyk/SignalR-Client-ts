@@ -12,7 +12,7 @@
     "typescript": "^2.0.3"
   },
   "scripts": {
-    "pretest": "tsc -p test",
+    "pretest": "tsc -p test/unit",
     "test": "jasmine-node artifacts/tests/test/"
   },
   "author": "moozzyk",

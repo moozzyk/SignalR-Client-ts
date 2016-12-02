@@ -1,5 +1,5 @@
-/// <reference path="../typings/index.d.ts" />
-import * as urlBuilder from "../src/UrlBuilder"
+/// <reference path="../../typings/index.d.ts" />
+import * as urlBuilder from "../../src/UrlBuilder"
 
 describe("UrlBuilder", () => {
     it("builds negotiate", () => {

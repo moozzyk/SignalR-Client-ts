@@ -1,9 +1,9 @@
 
-/// <reference path="../typings/index.d.ts" />
-import * as signalR from "../src/Connection"
-import { IHttpClient } from "../src/IHttpClient"
-import { ITransport } from "../src/ITransport"
-import { ISignalROptions } from "../src/ISignalROptions"
+/// <reference path="../../typings/index.d.ts" />
+import * as signalR from "../../src/Connection"
+import { IHttpClient } from "../../src/IHttpClient"
+import { ITransport } from "../../src/ITransport"
+import { ISignalROptions } from "../../src/ISignalROptions"
 
 describe("Connection", () => {
     it("send throws if the connection is not started", () => {
