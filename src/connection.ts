@@ -132,6 +132,12 @@ export class Connection {
             });
     }
 
+    public send(data: string) {
+        if (this.connectionState != ConnectionState.Connected) {
+            throw new Error("Cannot send data when the connection is not in the Connected state.");
+        }
+    }
+
     private onMessageReceived(message: string, initCallback: () => void) {
         if (!message) {
             return;
