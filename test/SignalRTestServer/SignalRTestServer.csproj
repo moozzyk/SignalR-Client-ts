@@ -131,6 +131,7 @@
     <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\node_modules\jasmine-core\lib\jasmine-core\jasmine.js" DestinationFolder="$(MSBuildThisFileDirectory)\wwwroot\lib\jasmine" />
     <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\node_modules\jasmine-core\lib\jasmine-core\jasmine-html.js" DestinationFolder="$(MSBuildThisFileDirectory)\wwwroot\lib\jasmine" />
     <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\node_modules\jasmine-core\lib\jasmine-core\jasmine.css" DestinationFolder="$(MSBuildThisFileDirectory)\wwwroot\lib\jasmine" />
+    <Exec Command="npm run gulp -- bundle-client --bundleOutDir $(MSBuildThisFileDirectory)\wwwroot\lib\signalr"/>
   </Target>
   <Target Name="AfterBuild">
   </Target>
