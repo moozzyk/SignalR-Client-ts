@@ -3,3 +3,6 @@
 artifacts/
 node_modules/
 *.log
+packages/
+[bB]in/
+[oO]bj/
