@@ -9,6 +9,6 @@
     "noImplicitAny": true
   },
   "files": [
-    "Connection.ts"
+    "*.ts"
   ]
 }

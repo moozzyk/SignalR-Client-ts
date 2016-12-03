@@ -8,12 +8,19 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "browserify": "^13.1.1",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.1.3",
     "jasmine-node": "^1.14.5",
-    "typescript": "^2.0.3"
+    "typescript": "^2.0.3",
+    "vinyl-source-stream": "^1.1.0",
+    "yargs": "^6.5.0"
   },
   "scripts": {
     "pretest": "tsc -p test/unit",
-    "test": "jasmine-node artifacts/tests/test/"
+    "test": "jasmine-node artifacts/tests/test/",
+    "gulp": "gulp"
   },
   "author": "moozzyk",
   "license": "MIT",
