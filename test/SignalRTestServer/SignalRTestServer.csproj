@@ -102,8 +102,23 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="wwwroot\connectionTests.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\lib\jasmine\boot.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\lib\jasmine\jasmine-html.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\lib\jasmine\jasmine.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\lib\jasmine\jasmine.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\lib\signalr\signalr.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -111,11 +126,12 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\node_modules\jasmine-core\lib\jasmine-core\boot.js" DestinationFolder="$(MSBuildThisFileDirectory)\wwwroot\lib\jasmine" />
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\node_modules\jasmine-core\lib\jasmine-core\jasmine.js" DestinationFolder="$(MSBuildThisFileDirectory)\wwwroot\lib\jasmine" />
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\node_modules\jasmine-core\lib\jasmine-core\jasmine-html.js" DestinationFolder="$(MSBuildThisFileDirectory)\wwwroot\lib\jasmine" />
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)..\..\node_modules\jasmine-core\lib\jasmine-core\jasmine.css" DestinationFolder="$(MSBuildThisFileDirectory)\wwwroot\lib\jasmine" />
   </Target>
   <Target Name="AfterBuild">
   </Target>
-  -->
 </Project>

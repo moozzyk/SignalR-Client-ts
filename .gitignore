@@ -6,3 +6,5 @@ node_modules/
 packages/
 [bB]in/
 [oO]bj/
+jasmine/
+signalr.js
