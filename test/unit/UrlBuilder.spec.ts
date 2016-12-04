@@ -8,7 +8,12 @@ describe("UrlBuilder", () => {
     });
 
     it("builds connect", () => {
-        expect(urlBuilder.buildConnect("https://test", "myTransport", "connection_token", "a=b"))
-            .toEqual("https://test/connect?clientProtocol=1.5&transport=myTransport&connectionToken=connection_token&a=b");
+        expect(urlBuilder.buildConnect("https://test", "myTransport", "connection$token", "a=b"))
+            .toEqual("https://test/connect?clientProtocol=1.5&transport=myTransport&connectionToken=connection%24token&a=b");
+    });
+
+    it("builds start", () => {
+        expect(urlBuilder.buildStart("https://test", "myTransport", "connection$token", "a=b"))
+            .toEqual("https://test/start?clientProtocol=1.5&transport=myTransport&connectionToken=connection%24token&a=b");
     });
 });

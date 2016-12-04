@@ -13,7 +13,6 @@ export enum ConnectionState {
 }
 
 export class Connection {
-    private httpClient: IHttpClient;
     private url: string;
     private queryString: string;
     private logging: boolean;
@@ -26,16 +25,13 @@ export class Connection {
     private options: ISignalROptions;
 
     constructor(url: string, queryString?: string, logging?:boolean,  options?:ISignalROptions) {
-        this.url = url;
-        this.queryString = (queryString && queryString[0] == '?')
-            ? queryString.slice(1)
-            : queryString;
+        this.url = urlBuilder.getFullUrl(url);
+        this.queryString = urlBuilder.getQueryString(queryString);
         this.logging = logging || true;
 
         // jasmine-node chokes on default parameter values
-        options = options || {};
-        this.httpClient = options.httpClient || new HttpClient();
-        this.options = options;
+        this.options = options || {};
+        this.options.httpClient = this.options.httpClient || new HttpClient();
         this.connectionState = ConnectionState.Disconnected;
     }
 
@@ -72,7 +68,7 @@ export class Connection {
     }
 
     private negotiate(): Promise<INegotiateResponse> {
-        return this.httpClient.get(urlBuilder.buildNegotiate(this.url, this.queryString))
+        return this.options.httpClient.get(urlBuilder.buildNegotiate(this.url, this.queryString))
         .then(response => {
             let negotiateResponse:INegotiateResponse = JSON.parse(response) as INegotiateResponse;
             if (negotiateResponse.ProtocolVersion != PROTOCOL_VERSION) {
