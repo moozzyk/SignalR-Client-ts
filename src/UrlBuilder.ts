@@ -24,13 +24,17 @@ export function getQueryString(queryString: string): string {
 }
 
 export function buildNegotiate(baseUrl: string, queryString: string): string {
-    return `${baseUrl}/negotiate?clientProtocol=${PROTOCOL_VERSION}&${queryString}`;
+    return `${baseUrl}/negotiate?clientProtocol=${PROTOCOL_VERSION}${queryString}`;
 }
 
 export function buildConnect(baseUrl:string, transportName: string, connectionToken: string, queryString: string) {
-    return `${baseUrl}/connect?clientProtocol=${PROTOCOL_VERSION}&transport=${transportName}&connectionToken=${encodeURIComponent(connectionToken)}&${queryString}`;
+    return `${baseUrl}/connect?clientProtocol=${PROTOCOL_VERSION}&transport=${transportName}&connectionToken=${encodeURIComponent(connectionToken)}${queryString}`;
 }
 
 export function buildStart(baseUrl:string, transportName: string, connectionToken: string, queryString: string) {
-    return `${baseUrl}/start?clientProtocol=${PROTOCOL_VERSION}&transport=${transportName}&connectionToken=${encodeURIComponent(connectionToken)}&${queryString}`;
+    return `${baseUrl}/start?clientProtocol=${PROTOCOL_VERSION}&transport=${transportName}&connectionToken=${encodeURIComponent(connectionToken)}${queryString}`;
+}
+
+export function buildAbort(baseUrl:string, transportName: string, connectionToken: string, queryString: string) {
+    return `${baseUrl}/abort?clientProtocol=${PROTOCOL_VERSION}&transport=${transportName}&connectionToken=${encodeURIComponent(connectionToken)}${queryString}`;
 }

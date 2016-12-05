@@ -43,7 +43,12 @@ export class WebSocketsTransport implements ITransport {
     }
 
     public send(data: string) {
-        throw new Error("Not implemented.");
+        this.webSocket.send(data);
+    }
+
+    public stop() {
+        this.webSocket.close();
+        this.webSocket = null;
     }
 
     public onMessageReceived: MessageReceived;

@@ -132,8 +132,29 @@ export class Connection {
         if (this.connectionState != ConnectionState.Connected) {
             throw new Error("Cannot send data when the connection is not in the Connected state.");
         }
-        this.transport.send(data);
-        // TODO: handle exceptions
+        try {
+            this.transport.send(data);
+        }
+        catch(e) {
+            // TODO: handle exceptions -> on error + rethrow?
+        }
+    }
+
+    public stop() {
+        if (this.connectionState == ConnectionState.Disconnected) {
+            return;
+        }
+
+        // TODO: handle reconnect
+        this.options.httpClient.get(urlBuilder.buildAbort(this.url, this.transport.getName(), this.connectionToken, this.queryString))
+            .catch(e => {
+                // ignore errors from abort
+            })
+
+        this.transport.stop();
+        this.changeState(ConnectionState.Disconnected);
+
+        // TODO: invoke "closed" event?
     }
 
     private onMessageReceived(message: string, initCallback: () => void) {

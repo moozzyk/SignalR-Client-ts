@@ -234,7 +234,7 @@ describe("Connection", () => {
         })
     });
 
-    it("can be started", done => {
+    it("can be started and stopped", done => {
         let transport: ITransport = <ITransport>{
             getName(): string {
                 return "fakeTransport";
@@ -242,6 +242,7 @@ describe("Connection", () => {
             start(url: string): Promise<void>{
                 return Promise.resolve();
             },
+            stop(): void {},
             onMessageReceived: (m: string) => {}
         };
 
@@ -258,10 +259,12 @@ describe("Connection", () => {
                             DisconnectTimeout: 30.0
                         }));
                     }
-                    else {
-                      transport.onMessageReceived("{\"C\":\"s-0\",\"S\":1,\"M\":[]}");
-                      return Promise.resolve();
-                  }
+
+                    if (url.indexOf("start") >= 0) {
+                        transport.onMessageReceived("{\"C\":\"s-0\",\"S\":1,\"M\":[]}");
+                    }
+
+                    return Promise.resolve();
                }
             },
             transport: transport
@@ -272,6 +275,8 @@ describe("Connection", () => {
         .then(() => {
             expect(true).toBe(true);
             expect(connection.state).toBe(signalR.ConnectionState.Connected);
+            connection.stop();
+            expect(connection.state).toBe(signalR.ConnectionState.Disconnected);
             done();
         })
         .catch((e:Error) => {

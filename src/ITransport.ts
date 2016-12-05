@@ -5,7 +5,7 @@ export interface ITransport {
     getName(): string;
     start(url: string): Promise<void>;
     send(data: string): void;
-    // TODO: stop
+    stop(): void;
     onMessageReceived: MessageReceived;
     onError: ErrorReceived;
 }
