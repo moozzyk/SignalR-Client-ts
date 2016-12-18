@@ -1,6 +1,6 @@
 ﻿describe('connection', () => {
     it('can connect', done => {
-        let connection = new signalR.Connection('/signalr/raw-connection');
+        let connection = new signalR.Connection('/raw-connection');
         connection.start()
         .then(() => {
             expect(connection.state).toBe(signalR.ConnectionState.Connected);
@@ -17,7 +17,7 @@
     });
 
     it('can send receive data', done => {
-        let connection = new signalR.Connection('/signalr/raw-connection');
+        let connection = new signalR.Connection('/raw-connection');
         connection.start()
         .then(() => {
             expect(connection.state).toBe(signalR.ConnectionState.Connected);
