@@ -1,4 +1,5 @@
-import { ITransport, MessageReceived, ErrorReceived } from "./ITransport"
+import { ITransport } from "./ITransport"
+import { MessageReceived, ErrorReceived } from "./Common"
 
 export class WebSocketsTransport implements ITransport {
     private webSocket: WebSocket;
@@ -8,7 +9,7 @@ export class WebSocketsTransport implements ITransport {
     }
 
     public start(url: string): Promise<void> {
-        return new Promise((resolve, reject) => {
+        return new Promise<void>((resolve, reject) => {
             url = url.replace(/^http/, "ws");
 
             let webSocket = new WebSocket(url);

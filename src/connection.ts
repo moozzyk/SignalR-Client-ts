@@ -5,6 +5,7 @@ import { WebSocketsTransport } from "./Transports"
 import { PROTOCOL_VERSION } from "./Constants"
 import { ISignalROptions } from "./ISignalROptions"
 import * as urlBuilder from "./UrlBuilder"
+import { MessageReceived } from "./Common"
 
 export enum ConnectionState {
     Disconnected,
@@ -23,6 +24,8 @@ export class Connection {
     private transport: ITransport;
     private connectionState: ConnectionState;
     private options: ISignalROptions;
+
+    public messageReceived: MessageReceived = (message: string) => {}
 
     constructor(url: string, queryString?: string, logging?:boolean,  options?:ISignalROptions) {
         this.url = urlBuilder.getFullUrl(url);
@@ -102,7 +105,7 @@ export class Connection {
         });
 
         transport.onMessageReceived = (message: string) => {
-            this.onMessageReceived(message, initCallback);
+            this.processMessage(message, initCallback);
         };
 
         transport.onError = (e:Error) => {
@@ -157,7 +160,7 @@ export class Connection {
         // TODO: invoke "closed" event?
     }
 
-    private onMessageReceived(message: string, initCallback: () => void) {
+    private processMessage(message: string, initCallback: () => void) : void {
         if (!message) {
             return;
         }
@@ -168,10 +171,14 @@ export class Connection {
             initCallback();
             return;
         }
+
+        if (m.M && Array.isArray(m.M)) {
+            m.M.forEach((message:string) => this.messageReceived(message));
+        }
     }
 
     private changeState(newState: ConnectionState): void {
-        this.log(`${this.connectionState} -> ${newState}`);
+        this.log(`${ConnectionState[this.connectionState]} -> ${ConnectionState[newState]}`);
         this.connectionState = newState;
     }
 

@@ -1,5 +1,4 @@
-export declare type MessageReceived = (message: string) => void;
-export declare type ErrorReceived = (e: Error) => void;
+import { MessageReceived, ErrorReceived } from "./Common"
 
 export interface ITransport {
     getName(): string;

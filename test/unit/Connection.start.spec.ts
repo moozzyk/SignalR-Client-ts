@@ -5,7 +5,7 @@ import { ITransport } from "../../src/ITransport"
 import { ISignalROptions } from "../../src/ISignalROptions"
 
 describe("Connection", () => {
-    it("fails to connect if negotiate fails", done => {
+    it("fails to connect if negotiate fails", (done:()=>void) => {
         let options: ISignalROptions = {
             httpClient: <IHttpClient>{
                 get(url: string) : Promise<string> {
@@ -29,7 +29,7 @@ describe("Connection", () => {
             });
     });
 
-    it("fails to connect if protocol version not 1.5", done => {
+    it("fails to connect if protocol version not 1.5", (done:()=>void) => {
         let options: ISignalROptions = {
             httpClient: <IHttpClient>{
                 get(url: string) : Promise<string> {
@@ -52,7 +52,7 @@ describe("Connection", () => {
             });
     });
 
-    it("fails to start if transport fails to start", done => {
+    it("fails to start if transport fails to start", (done:()=>void) => {
         let transport: ITransport = <ITransport>{
             getName(): string {
                 return "fakeTransport";
@@ -77,7 +77,7 @@ describe("Connection", () => {
                         }));
                     }
                     else {
-                      return Promise.resolve();
+                      return Promise.resolve("");
                   }
                }
             },
@@ -97,7 +97,7 @@ describe("Connection", () => {
         })
     });
 
-    it("fails to start if start request fails", done => {
+    it("fails to start if start request fails", (done:()=>void) => {
         let transport: ITransport = <ITransport>{
             getName(): string {
                 return "fakeTransport";
@@ -142,7 +142,7 @@ describe("Connection", () => {
         })
     });
 
-    it("fails to start if init not received within ConnectionTimeOut", done => {
+    it("fails to start if init not received within ConnectionTimeOut", (done:()=>void) => {
         let transport: ITransport = <ITransport>{
             getName(): string {
                 return "fakeTransport";
@@ -167,7 +167,7 @@ describe("Connection", () => {
                         }));
                     }
                     else {
-                      return Promise.resolve();
+                      return Promise.resolve("");
                   }
                }
             },
@@ -187,7 +187,7 @@ describe("Connection", () => {
         })
     });
 
-    it("fails to start if transport fails after starting", done => {
+    it("fails to start if transport fails after starting", (done:()=>void) => {
         let transport: ITransport = <ITransport>{
             getName(): string {
                 return "fakeTransport";
@@ -214,7 +214,7 @@ describe("Connection", () => {
                     }
                     else {
                       transport.onError(new Error("Transport disconnected."));
-                      return Promise.resolve();
+                      return Promise.resolve("");
                   }
                }
             },
@@ -234,7 +234,7 @@ describe("Connection", () => {
         })
     });
 
-    it("can be started and stopped", done => {
+    it("can be started and stopped", (done:()=>void) => {
         let transport: ITransport = <ITransport>{
             getName(): string {
                 return "fakeTransport";
@@ -264,7 +264,7 @@ describe("Connection", () => {
                         transport.onMessageReceived("{\"C\":\"s-0\",\"S\":1,\"M\":[]}");
                     }
 
-                    return Promise.resolve();
+                    return Promise.resolve("");
                }
             },
             transport: transport

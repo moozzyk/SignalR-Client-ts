@@ -7,7 +7,7 @@ namespace SignalRTestServer
     {
         protected override Task OnReceived(IRequest request, string connectionId, string data)
         {
-            return Task.FromResult(0);
+            return Connection.Send(connectionId, data);
         }
     }
 }

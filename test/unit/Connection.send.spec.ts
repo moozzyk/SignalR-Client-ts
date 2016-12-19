@@ -12,7 +12,7 @@ describe("Connection", () => {
             .toThrow(new Error("Cannot send data when the connection is not in the Connected state."));
     });
 
-    it("send sends messages using transport", done => {
+    it("send sends messages using transport", (done: ()=>void) => {
         var lastMessage: string;
         let transport: ITransport = <ITransport>{
             getName(): string {
@@ -42,7 +42,7 @@ describe("Connection", () => {
                     }
                     else {
                       transport.onMessageReceived("{\"C\":\"s-0\",\"S\":1,\"M\":[]}");
-                      return Promise.resolve();
+                      return Promise.resolve("");
                   }
                }
             },
